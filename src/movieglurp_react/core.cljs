@@ -3,7 +3,10 @@
    [goog.dom :as gdom]
    [reagent.core :as reagent :refer [atom]]
    [secretary.core :as secretary :include-macros true]
-   [accountant.core :as accountant]))
+   [accountant.core :as accountant]
+   ;; [movieglurp-react.front.main :as main]
+   [movieglurp-react.front.movie.list :as list]
+   [movieglurp-react.front.wrapper :as html-wrapper]))
 
 (defn home-page []
   [:div [:h2 "Welcome to movieglurp-re-react"]
@@ -33,9 +36,16 @@
   (mount))
 
 (secretary/defroute "/" []
-  (reset! page #'home-page))
+  (reset! page (fn []
+                 (-> (list/get-html)
+                     (html-wrapper/wrap-page-html)))))
 
 (secretary/defroute "/about" []
+  (reset! page (fn []
+                 (-> (list/get-html)
+                     (html-wrapper/wrap-page-html)))))
+
+(secretary/defroute "/test" []
   (reset! page #'about-page))
 
 (init!)

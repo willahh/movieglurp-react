@@ -1,0 +1,104 @@
+;; (ns movieglurp-react.front.main
+;;   (:require  #?(:clj [hiccup.core :as core]
+;;                 :cljs [hiccups.runtime :as core 
+;;                        :refer [render-html]
+;;                        :rename {render-html html}
+;;                        :include-macros true])))
+
+;; (ns movieglurp-react.front.main
+;;   (:require  #?(:clj [hiccup.core :as core]
+;;                 :cljs [hiccups.runtime :as hiccupsrt])))
+
+;; (ns movieglurp-react.front.main
+;;   (:require [hiccups.runtime :as hiccupsrt]))
+
+;; (ns movieglurp-react.front.main
+;;   (:require #?(:clj [hiccup.core :as core]
+;;                :cljs [hiccups.core :as core])))
+
+
+;; (ns movieglurp-react.front.main
+;;   (:require [hiccups.core :as core2]))
+
+;; (ns movieglurp-react.front.main
+;;   (:require #?(:clj [hiccup.core :as core]
+;;                :cljs [hiccups.core :as core])))
+
+;; (ns movieglurp-react.front.main
+;;   (:require  #?(:clj [hiccup.core :as core]
+;;                 :cljs [hiccups.runtime :as hiccupsrt])))
+
+(ns movieglurp-react.front.main)
+
+(def nav [{:label "Home" :href "/"}
+          {:label "Week" :info "Get last week movies" :href "/week"}
+          {:label "Actors" :info "Show actors" :href "/actor"}
+          {:label "Admin" :href "/admin" :info "Administration"}])
+
+(defn head []
+  [:head
+   [:title "Alloglurp!"]
+   [:link {:type "text/css", :href "/lib/material_icon.css" :rel "stylesheet"}]
+   [:script {:type "text/javascript", :src "/lib/jquery-3.1.1.min.js"}]
+   [:script {:type "text/javascript", :src "/semantic/dist/semantic.min.js"}]
+   [:script {:type "text/javascript", :src "/js/main.js"}]
+   [:link {:type "text/css", :href "/semantic/dist/semantic.min.css" :rel "stylesheet"}]
+   [:link {:type "text/css", :href "/css/main.css" :rel "stylesheet"}]])
+
+(defn nav-html [nav]
+  [:div {:class "ui large secondary inverted pointing menu"}
+   [:a {:class "toc item"} "<i class=\"sidebar icon\"></i>"]
+   (map (fn [row]
+          [:a {:class "item" :href (:href row)} (:label row)]) nav)])
+
+(defn header-html []
+  [:div
+   [:div.ui {:class "ui inverted menu"}
+    [:div {:class "header item"} "Glurps!"]
+    [:div {:class "ui container"}
+     (nav-html nav)
+     [:div {:class "right menu"}
+      [:div {:class "item segment"}
+       [:a {:class "ui inverted button"} "Log in"]
+       [:a {:class "ui button primary"} "Sign up"]
+       ]]]]])
+
+(defn breadcrumb-html []
+  [:div {:class "ui large breadcrumb"}
+   [:a.section "Home"]
+   [:i {:class "right chevron icon divider"}]
+   [:a.section "Actor"]
+   [:i {:class "right chevron icon divider"}]
+   [:a.section "List"]])
+
+(defn debug-html [request context session params page-params count offset limit total]
+  [:div {:style "padding-top: 40px;"}
+   [:div "context"
+    [:div (pr-str context)]]
+   [:div "request"
+    [:div (pr-str request)]]
+   [:div "params"
+    [:div (pr-str params)]]
+   [:div
+    [:div "session"
+     [:div (pr-str session)]]
+    [:div "page-params"
+     [:div (pr-str page-params)]]
+    [:div
+     [:div
+      "count: "(pr-str count)
+      "offset: " (pr-str offset)
+      "limit: "(pr-str limit)
+      "total:" (pr-str total)]]]])
+
+;; (defn wrap-page-html [html]
+;;   "Html wrapper for all admin pages."
+;;   (str "<!DOCTYPE html>\n"
+;;        (core/html
+;;         [:html
+;;          (head)
+;;          [:body
+;;           [:div (header-html)]
+;;           [:div {:class "ui container"}
+;;            html]]])
+;;        ))

@@ -2,7 +2,6 @@
   (:require [clojure.java.io :as io]
             [net.cgrand.enlive-html :as html]
             [clojure.string :as str]
-            [pl.danieljanus.tagsoup :as tagsoup]
             [clojure.data.json :as json])
   (:use [clj-webdriver.taxi]
         [clj-webdriver.driver :only [init-driver]]))
@@ -24,27 +23,11 @@ breaks."
 (defn remove-meta-itemprop [html]
   (str/replace html #"<meta itemprop=\"(\w+)\" content=\"(.+)\">" ""))
 
-;; (defn write-to-file [parsed-data-map file-path]
-;;   (with-open [output-buffer (io/writer (str/join ["resources/data/" file-path]))]
-;;     (.write output-buffer (with-out-str (json/pprint parsed-data-map)))))
-
-;; (defn file-path-from-url [url]
-;;   (str/join [(-> url
-;;                  (str/replace #"https:\/\/www\.imdb\.com\/" "")
-;;                  (str/replace #"/" "_")
-;;                  (str/replace #"\?" "-")
-;;                  (str/replace #"&" "-"))
-;;              ".json"]))
-
 (defn get-parsed-html-from-url [url]
   (get-url url)
   (-> (html "body")
       (remove-meta-itemprop)
       (html/html-snippet)))
-
-;; (defn scrap-data-from-url-and-write-to-file [scrap-fn url]
-;;   (let [file-path (file-path-from-url url)]
-;;     (write-to-file (scrap-fn url) file-path)))
 
 (def get-parsed-html-from-url-memoized (memoize get-parsed-html-from-url))
 

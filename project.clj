@@ -6,7 +6,8 @@
 
   :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [;; Clojure
+                 [org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
                  [org.clojure/data.json "0.2.6"]
                  [ring "1.6.3"]
@@ -21,7 +22,11 @@
                  [yogthos/config "1.1.1"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.4"
-                  :exclusions [org.clojure/tools.reader]]]
+                  :exclusions [org.clojure/tools.reader]]
+
+                 ;; Clojurescript
+                 [hiccups "0.3.0"]
+                 [cljs-ajax "0.7.4"]]
   
   :source-paths ["src"]
   

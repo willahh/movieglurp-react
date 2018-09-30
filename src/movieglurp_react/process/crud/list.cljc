@@ -1,16 +1,6 @@
 (ns movieglurp-react.process.crud.list
   (:require [movieglurp-react.component.form.select :as select]))
 
-(defn get-bulk-action-html [path]
-  [:div 
-   (select/select-html "bulk" 1 [{:name "id" :value 1 :label "Action"}
-                                 {:name "edit" :value 2 :label "Edit" :on-click (str "document.location.href='" path "/update/' + get_selected_id();") :icon [:i.edit.icon]}
-                                 {:name "trash" :value 3 :label "Trash" :on-click (str "document.location.href='" path "/disable/' + get_selected_id();") :icon [:i.trash.icon]}
-                                 {:name "restore" :value 3 :label "Restore" :on-click (str "document.location.href='" path "/enable/' + get_selected_id();") :icon [:i.undo.icon]}
-                                 {:name "delete" :value 3 :label "Delete" :on-click (str "document.location.href='" path "/delete/' + get_selected_id();") :icon [:i.delete.icon]}
-                                 {:name "fav" :value 4 :label "Fav" :on-click (str "document.location.href='" path "/fav/' + get_selected_id();") :icon [:i.heart.outline.icon]}
-                                 {:name "unfav" :value 4 :label "Unfav" :on-click (str "document.location.href='" path "/unfav/' + get_selected_id();") :icon [:i.heart.icon]}])])
-
 (defn search-html [& value]
   (let [value (first value)]
     [:form {:action "/admin/search" :method "get"}
@@ -40,7 +30,8 @@
        [:a {:class (str "item" (when (= page end-list) " active")) :href (str path "?page=" page-count)} page-count]])))
 
 (defn filter-option-html [state path page offset limit total]
-  [:div.row {:style "padding: 12px 0; margin: 0 0 6px 0;"}
+  [:div.row
+   ;; {:style "padding: 12px 0; margin: 0 0 6px 0;"}
    [:div.column
     [:div.ui.grid
      ;; (get-bulk-action-html path)
