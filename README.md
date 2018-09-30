@@ -1,6 +1,8 @@
 # movieglurp-react
 
-FIXME: Write a one-line description of your library/project.
+Clojure Imdb scrapper.
+* Database: Solr
+* Front-end: React
 
 ## Overview
 
