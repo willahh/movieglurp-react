@@ -8,12 +8,16 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
-                 [reagent "0.8.1"]
+                 [org.clojure/data.json "0.2.6"]
                  [ring "1.6.3"]
                  [ring-server "0.5.0"]
                  [ring/ring-defaults "0.3.1"]
+                 [ring/ring-json "0.4.0"]
                  [compojure "1.6.1"]
                  [hiccup "1.0.5"]
+                 [enlive "1.1.6"]
+                 [reagent "0.8.1"]
+                 [clj-webdriver "0.7.2"]
                  [yogthos/config "1.1.1"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.4"

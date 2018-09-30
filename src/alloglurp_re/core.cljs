@@ -1,4 +1,4 @@
-(ns ^:figwheel-hooks movieglurp-react.core
+(ns ^:figwheel-hooks-react movieglurp-react.core
   (:require
    [goog.dom :as gdom]
    [reagent.core :as reagent :refer [atom]]
@@ -6,23 +6,17 @@
    [accountant.core :as accountant]))
 
 (defn home-page []
-  [:div [:h2 "Welcome to movieglurp-re"]
+  [:div [:h2 "Welcome to movieglurp-re-react"]
    [:div [:a {:href "/about"} "go to 2about page"]]])
 
 (defn about-page []
-  [:div [:h2 "About movieglurp-re"]
+  [:div [:h2 "About-react movieglurp-re"]
    [:div [:a {:href "/"} "go to the h3ome page"]]])
 
 (defonce page (atom #'home-page))
 
 (defn current-page []
   [:div [@page]])
-
-(secretary/defroute "/" []
-  (reset! page #'home-page))
-
-(secretary/defroute "/about" []
-  (reset! page #'about-page))
 
 (defn mount []
   (reagent/render [current-page] (.getElementById js/document "app")))
@@ -37,6 +31,12 @@
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
   (mount))
+
+(secretary/defroute "/" []
+  (reset! page #'home-page))
+
+(secretary/defroute "/about" []
+  (reset! page #'about-page))
 
 (init!)
 
