@@ -50,10 +50,12 @@
 ;;                            offset)))))
 
 ;; (defn drop-table [db table]
-;;   (jdbc/db-do-commands db (jdbc/drop-table-ddl table)))
+;;   ;; (jdbc/db-do-commands db (jdbc/drop-table-ddl table))
+;;   )
 
 ;; (defn create-table [db table columns]
-;;   (jdbc/execute! db (jdbc/create-table-ddl table columns)))
+;;   ;; (jdbc/execute! db (jdbc/create-table-ddl table columns))
+;;   )
 
 ;; (defn get-table-config [name columns & {:keys [extend]}]
 ;;   (let [abstract-columns (when extend (:columns extend))

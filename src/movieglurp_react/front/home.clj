@@ -7,11 +7,6 @@
             [movieglurp-react.service.session.session :refer [merge-params-session]]
             [clojure.string :as str]))
 
-(def *genre* '("Western" "Fantastique" "Comédie" "Péplum" "Drame" "Epouvante-horreur"
-               "Thriller" "Guerre" "Comédie dramatique" "Comédie musicale" "Biopic"
-               "Romance" "Policier" "Historique" "Aventure" "Action" "Animation"
-               "Science fiction"))
-
 (defn- card-list-html [context movie-records-list]
   [:div {:class "ui stackable six column grid"}
    (let [html-records (map map-movie-record-to-card-record movie-records-list)]
@@ -61,38 +56,6 @@
       "offset: " (pr-str offset)
       "limit: "(pr-str limit)
       "total:" (pr-str total)]]]])
-
-(defn- filter-html [page-params]
-  (let [genre (:genre page-params)]
-    [:form.ui.form {:id "filter-fom"}
-     [:script "function on_filter_change(event) {
-         console.log('onchange', event);
-         //document.querySelector('input[name=\"genre\"]').value;
-         document.getElementById('filter-fom').submit();
-     };"]
-     [:div.field
-      [:label
-       "First Name"]
-      [:div.ui.multiple.dropdown
-       [:input
-        {:name "genre", :type "hidden" :value genre :onchange "on_filter_change(event);"}]
-       [:i.filter.icon]
-       [:span.text
-        "Filter Posts"]
-       [:div.menu
-        [:div.ui.icon.search.input
-         [:i.search.icon]
-         [:input
-          {:placeholder "Search tags...", :type "text"}]]
-        [:div.divider]
-        [:div.header
-         [:i.tags.icon]
-         "Tag Label"]
-        [:div.scrolling.menu
-         (for [g *genre*]
-           [:div.item {:data-value g}
-            [:div.ui.red.empty.circular.label]
-            [:span g]])]]]]]))
 
 (defn- facet-html [movie-facet genre-list]
   [:div.ui.labels
