@@ -1,12 +1,11 @@
 # movieglurp-react
 
 Clojure Imdb scrapper.
+
+## Overview
 * Database: Solr
 * Front-end: React
 
-## Overview
-
-FIXME: Write a paragraph about the library/project and highlight its goals.
 
 ## Development
 
