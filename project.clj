@@ -5,7 +5,6 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :min-lein-version "2.7.1"
-
   :dependencies [;; Clojure
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
@@ -27,9 +26,9 @@
                  ;; Clojurescript
                  [hiccups "0.3.0"]
                  [cljs-ajax "0.7.4"]]
-  
+  :ring {:handler movieglurp-react.route/app}
+  :plugins [[lein-ring "0.7.3"]]
   :source-paths ["src"]
-  
   :aliases {"fig"       ["trampoline" "run" "-m" "figwheel.main"]
             "fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
             "fig:min"   ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]

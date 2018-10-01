@@ -6,4 +6,4 @@
 (defn wrap-page-html [html]
   "Html wrapper for all admin pages."
   [:div (main/header-html)
-   [:div {:class "ui container"}html]])
+   [:div {:class "ui container"} html]])

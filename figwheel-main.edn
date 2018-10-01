@@ -1,0 +1,3 @@
+{:watch-dirs ["src"]
+ :css-dirs ["resources/public/css"]
+ :ring-handler movieglurp-react.route/app}

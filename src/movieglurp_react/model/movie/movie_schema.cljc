@@ -24,3 +24,15 @@
           :_version_ (-> m :_version_)})
        (-> query-result
            :response :docs)))
+
+(defn map-movie-record-from-query-row [query-row]
+  {:genre (:genre query-row)
+   :director (first (:director query-row))
+   :short-description (first (:director query-row))
+   :time (try (-> query-row :time first (Integer.))
+              (catch Exception e ""))
+   :title (-> query-row :title first)
+   :idb-id (-> query-row :imdb-id first)
+   :poster (-> query-row :poster first)
+   :id (-> query-row :id)
+   :_version_ (-> query-row :_version_)})

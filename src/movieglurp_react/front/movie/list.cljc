@@ -1,20 +1,18 @@
 (ns movieglurp-react.front.movie.list
-  #?(:cljs
-     (:require [reagent.core :as reagent :refer [atom]]
-               [clojure.string :as str]
-               [ajax.core :refer [GET POST raw-response-format text-response-format]]
-               [movieglurp-react.component.card :as card]
-               [movieglurp-react.process.crud.list :as crud-list]
-               [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])
-     
-     :cljc
+  #?(:clj
      (:require  
       [clojure.string :as str]
       [ajax.core :refer [GET POST raw-response-format text-response-format]]
       [movieglurp-react.component.card :as card]
       [movieglurp-react.process.crud.list :as crud-list]
-      [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])))
-
+      [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])
+     :cljs
+     (:require [reagent.core :as reagent :refer [atom]]
+               [cljs.reader :as reader]
+               [ajax.core :refer [GET POST raw-response-format text-response-format]]
+               [movieglurp-react.component.card :as card]
+               [movieglurp-react.process.crud.list :as crud-list]
+               [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])))
 
 (defonce state (atom 
                 {:page 1
@@ -64,14 +62,14 @@
   [:div.ui.labels
    (->> movie-facet
         (map (fn [m]
-               [:button {:class (str/join " " ["ui" "label"
-                                               (when (contains? (set genre-list) (:label m))
-                                                 "red")])
-                         :onclick (str/join ["toggleFacet('" (:label m) "');"])}
+               [:button {:class (clojure.string/join " " ["ui" "label"
+                                                          (when (contains? (set genre-list) (:label m))
+                                                            "red")])
+                         :onclick (clojure.string/join ["toggleFacet('" (:label m) "');"])}
                 (:label m)
                 [:div.detail (:count m)]
                 [:i.icon.close]])))
-   [:input {:type "text" :name "genre" :value (str/join "," genre-list)}]
+   [:input {:type "text" clojure.string/join "genre" :value (clojure.string/join "," genre-list)}]
    [:script
     "function toggleFacet(genre) {
          var el = document.querySelector('input[name=\"genre\"]');
@@ -90,24 +88,18 @@
   [:div.ui.stackable.six.column.grid
    ;; {:class "ui stackable six column grid"}
 
-   (let [html-records (map map-movie-record-to-card-record movie-records-list)]
+   (let [html-records (map movieglurp-react.model.movie.movie-schema/map-movie-record-to-card-record movie-records-list)]
      (map (fn [html-record]
             [:div.column
              (apply card/card-html context (map #(second %) html-record))])
           html-records))])
 
 (defn fetch-actor []
-  (GET (str "http://localhost/projects/clojure/movieglurp-react/resources/movies.edn")
+  (GET (str "http://localhost:9500/api/movies")
        :handler 
        (fn [response]
-         ;; (js/console.log "ok")
-         (swap! state update-in [:records] (fn [v] [{:name "ok"}]))
-         )))
-
-
-
-;; (swap! state {:page 2})
-
+         (swap! state update-in [:records] (fn [v]
+                                             #?(:cljs (cljs.reader/read-string response)))))))
 
 (defn get-html []
   (let [context "/movie/list"

@@ -1,33 +1,3 @@
-;; (ns movieglurp-react.front.main
-;;   (:require  #?(:clj [hiccup.core :as core]
-;;                 :cljs [hiccups.runtime :as core 
-;;                        :refer [render-html]
-;;                        :rename {render-html html}
-;;                        :include-macros true])))
-
-;; (ns movieglurp-react.front.main
-;;   (:require  #?(:clj [hiccup.core :as core]
-;;                 :cljs [hiccups.runtime :as hiccupsrt])))
-
-;; (ns movieglurp-react.front.main
-;;   (:require [hiccups.runtime :as hiccupsrt]))
-
-;; (ns movieglurp-react.front.main
-;;   (:require #?(:clj [hiccup.core :as core]
-;;                :cljs [hiccups.core :as core])))
-
-
-;; (ns movieglurp-react.front.main
-;;   (:require [hiccups.core :as core2]))
-
-;; (ns movieglurp-react.front.main
-;;   (:require #?(:clj [hiccup.core :as core]
-;;                :cljs [hiccups.core :as core])))
-
-;; (ns movieglurp-react.front.main
-;;   (:require  #?(:clj [hiccup.core :as core]
-;;                 :cljs [hiccups.runtime :as hiccupsrt])))
-
 (ns movieglurp-react.front.main)
 
 (def nav [{:label "Home" :href "/"}
@@ -90,15 +60,3 @@
       "offset: " (pr-str offset)
       "limit: "(pr-str limit)
       "total:" (pr-str total)]]]])
-
-;; (defn wrap-page-html [html]
-;;   "Html wrapper for all admin pages."
-;;   (str "<!DOCTYPE html>\n"
-;;        (core/html
-;;         [:html
-;;          (head)
-;;          [:body
-;;           [:div (header-html)]
-;;           [:div {:class "ui container"}
-;;            html]]])
-;;        ))
