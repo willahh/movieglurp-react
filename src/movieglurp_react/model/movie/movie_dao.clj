@@ -3,12 +3,11 @@
             [movieglurp-react.service.db.db :as db]
             [movieglurp-react.model.movie.movie-schema :as schema]))
 
-(defn find-by-imdb-id [imbd-id]
-  (-> (db/connection :q (str "imdb-id:" imbd-id))
-      schema/get-movie-record-from-query-result
-      first))
-
 (def collection db/core-slr-sample)
+
+(defn find-by-imdb-id [imbd-id]
+  (-> (query db/connection collection :q (str "imdb-id:" imbd-id))
+      :response :docs first))
 
 (defn find-list
   ([]

@@ -3,6 +3,7 @@
 
 (defn card-html [context id title description image meta]
   [:a.ui.card
+   {:href (str "/detail?imdb-id=" id)}
    ;; {:class "ui card" :data-id (str id) :href (str/join [context "/" id])}
    
    [:div 

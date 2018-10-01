@@ -4,17 +4,17 @@
    [reagent.core :as reagent :refer [atom]]
    [secretary.core :as secretary :include-macros true]
    [accountant.core :as accountant]
-   ;; [movieglurp-react.front.main :as main]
    [movieglurp-react.front.movie.list :as list]
+   [movieglurp-react.front.movie.detail :as detail] 
    [movieglurp-react.front.wrapper :as html-wrapper]))
 
 (defn home-page []
   [:div [:h2 "Welcome to movieglurp-re-react"]
-   [:div [:a {:href "/about"} "go to 2about page"]]])
+   [:div [:a {:href "/about"} "go to about page"]]])
 
 (defn about-page []
   [:div [:h2 "About-react movieglurp-re"]
-   [:div [:a {:href "/"} "go to the h3ome page"]]])
+   [:div [:a {:href "/"} "go to the home page"]]])
 
 (defonce page (atom #'home-page))
 
@@ -38,6 +38,11 @@
 (secretary/defroute "/" []
   (reset! page (fn []
                  (-> (list/get-html)
+                     (html-wrapper/wrap-page-html)))))
+
+(secretary/defroute "/detail" [imdb-id]
+  (reset! page (fn []
+                 (-> (detail/get-html imdb-id)
                      (html-wrapper/wrap-page-html)))))
 
 (secretary/defroute "/about" []

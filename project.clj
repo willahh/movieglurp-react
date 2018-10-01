@@ -1,6 +1,6 @@
 (defproject movieglurp-react "0.1.0-SNAPSHOT"
-  :description "FIXME: write this!"
-  :url "http://example.com/FIXME"
+  :description ""
+  :url ""
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
@@ -10,9 +10,9 @@
                  [org.clojure/clojurescript "1.10.339"]
                  [org.clojure/data.json "0.2.6"]
                  [ring "1.6.3"]
-                 [ring-server "0.5.0"]
+                 ;; [ring-server "0.5.0"]
                  [ring/ring-defaults "0.3.1"]
-                 [ring/ring-json "0.4.0"]
+                 ;; [ring/ring-json "0.4.0"]
                  [compojure "1.6.1"]
                  [hiccup "1.0.5"]
                  [enlive "1.1.6"]

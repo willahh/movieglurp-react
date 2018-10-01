@@ -20,21 +20,18 @@
                                :response :docs
                                (map movie-schema/map-movie-record-from-query-row)
                                (into []))))
+             (GET "/detail" [imdb-id]
+                  (pr-str (->> (movie-dao/find-by-imdb-id imdb-id)
+                               )))
              (GET "/facet" [genre]
                   (pr-str (->> (movie-dao/get-movie-facet genre)
                                (into []))))
 
              (GET "/home" [genre]
                   (pr-str (->> (movie-dao/find-list-for-home 0 10 genre)
-                               :records
-                               (into []))))))
+                               ;; :records (into [])
+                               )))))
    (assoc-in site-defaults [:security :anti-forgery] false)))
-
-
-
-
-
-
 
 (defroutes main-route
   site-routes

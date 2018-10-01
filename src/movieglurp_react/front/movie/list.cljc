@@ -21,7 +21,11 @@
                  :genre ""
                  :movie-facet []
                  :user-records []
-                 :records []}))
+                 :records []
+                 :context ""
+                 :offset 1
+                 :limit 10
+                 :total 0}))
 
 (def *genre* '("Western" "Fantastique" "Comédie" "Péplum" "Drame" "Epouvante-horreur"
                "Thriller" "Guerre" "Comédie dramatique" "Comédie musicale" "Biopic"
@@ -64,21 +68,28 @@
   (def anim-delay 300)
   (swap! state update-in [:genre] (fn [m] genre))
   #?(:cljs
-     (do (.map (js/$ ".card") (fn [i m] (.hide (js/$ m) anim-delay)))
+     (do (-> (js/$ ".card")
+             (.map (fn [i m] (.hide (js/$ m) anim-delay))))
          (js/setTimeout
           (fn []
             (GET (str "http://localhost:9500/api/movies/home?genre=" genre)
                  :handler 
                  (fn [response]
                    #?(:cljs
-                      ;; $('.card').map((i, m) => $(m).hide(1000))
-                      (.map (js/$ ".card") (fn [i m] (.show (js/$ m) anim-delay))))
-                   
-                   (swap! state update-in [:records] (fn [v]
-                                                       #?(:cljs (cljs.reader/read-string response))))))) anim-delay))
-     
-     )
-  )
+                      (-> (js/$ ".card")
+                          (.map (fn [i m] (.show (js/$ m) anim-delay)))))
+                   ;; (:context @state)
+                   ;; (:page @state)
+                   ;; (:offset @state)
+                   ;; (:limit @state)
+                   ;; (:total @state)
+                   (let [response-data #?(:cljs (cljs.reader/read-string response))]
+                     (swap! state update-in [:total] (fn [v]
+                                                       (count (:records response-data))))
+                     (swap! state update-in [:records]
+                            (fn [v]
+                              #?(:cljs (-> response-data
+                                           :records)))))))) anim-delay))))
 
 (defn- facet-html [movie-facet genre-list]
   [:div.ui.labels
@@ -102,8 +113,6 @@
              (apply card/card-html context (map #(second %) html-record))])
           html-records))])
 
-
-
 (defn fetch-facet []
   (GET (str "http://localhost:9500/api/movies/facet")
        :handler 
@@ -121,7 +130,8 @@
         limit 10
         records []]
     [:div
-     [:div (:page @state)]
+     [:div "Page: "(:page @state) "Total:" (:total @state)]
+     [:div "about:" [:a {:href "/detail?imdb-id=1"} "detail"]]
      [:button {:on-click (fn [genre]
                            (fetch-actor "action"))} "Fetch actor"]
      [:button {:on-click fetch-facet} "Fetch facet"]
@@ -130,10 +140,10 @@
       [:input {:type "hidden" :name "page" :value 1}]
       [:div
        (facet-html (:movie-facet @state) genre-list)
-       ;; (crud-list/filter-option-html {:limit 10 :q "t"} context page offset limit count)
+       (crud-list/filter-option-html {:q "t"} (:context @state) (:page @state) (:offset @state) (:limit @state) (:total @state))
+       (card-list-html context (:records @state))]]]))
 
-       (card-list-html context (:records @state))
-       
 
-       ]]]))
+
+
 
