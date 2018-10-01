@@ -26,13 +26,14 @@
    (-> (query db/connection collection :q p-query
               :start start :rows limit))))
 
-(defn find-list-for-home [session params]
+(defn find-list-for-home [offset limit genre]
   (let [;; Parameters
-        offset (Integer. (or (:offset params) 1))
-        limit (Integer. (or (:limit params) 10))
+        ;; offset (Integer. (or (:offset params) 1))
+        ;; limit (Integer. (or (:limit params) 10))
+        ;; genre (:genre params)
         order :alloid
         asc :ASC
-        genre (:genre params)]
+        ]
     
     (let [genre-list (if genre
                        (clojure.string/split genre #",")

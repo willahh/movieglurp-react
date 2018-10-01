@@ -18,6 +18,8 @@
                 {:page 1
                  :tab "first"
                  :actor-selected ""
+                 :genre ""
+                 :movie-facet []
                  :user-records []
                  :records []}))
 
@@ -58,31 +60,37 @@
             [:div.ui.red.empty.circular.label]
             [:span g]])]]]]]))
 
+(defn fetch-actor [genre]
+  (def anim-delay 300)
+  (swap! state update-in [:genre] (fn [m] genre))
+  #?(:cljs
+     (do (.map (js/$ ".card") (fn [i m] (.hide (js/$ m) anim-delay)))
+         (js/setTimeout
+          (fn []
+            (GET (str "http://localhost:9500/api/movies/home?genre=" genre)
+                 :handler 
+                 (fn [response]
+                   #?(:cljs
+                      ;; $('.card').map((i, m) => $(m).hide(1000))
+                      (.map (js/$ ".card") (fn [i m] (.show (js/$ m) anim-delay))))
+                   
+                   (swap! state update-in [:records] (fn [v]
+                                                       #?(:cljs (cljs.reader/read-string response))))))) anim-delay))
+     
+     )
+  )
+
 (defn- facet-html [movie-facet genre-list]
   [:div.ui.labels
    (->> movie-facet
         (map (fn [m]
-               [:button {:class (clojure.string/join " " ["ui" "label"
-                                                          (when (contains? (set genre-list) (:label m))
-                                                            "red")])
-                         :onclick (clojure.string/join ["toggleFacet('" (:label m) "');"])}
+               [:div {:class (clojure.string/join " " ["ui" "label"
+                                                       (when (= (:label m) (:genre @state))
+                                                         "red")])
+                      :on-click #(fetch-actor (:label m))}
                 (:label m)
                 [:div.detail (:count m)]
-                [:i.icon.close]])))
-   [:input {:type "text" clojure.string/join "genre" :value (clojure.string/join "," genre-list)}]
-   [:script
-    "function toggleFacet(genre) {
-         var el = document.querySelector('input[name=\"genre\"]');
-         var genreList = el.value.split(',');
-         if (genreList.includes(genre)) {
-             var index = genreList.indexOf(genre);
-             genreList.splice(index, 1);
-             el.value = genreList;
-         } else {
-            el.value += ',' + genre;
-         }
-    }
-"]])
+                [:i.icon.close]])))])
 
 (defn- card-list-html [context movie-records-list]
   [:div.ui.stackable.six.column.grid
@@ -94,12 +102,15 @@
              (apply card/card-html context (map #(second %) html-record))])
           html-records))])
 
-(defn fetch-actor []
-  (GET (str "http://localhost:9500/api/movies")
+
+
+(defn fetch-facet []
+  (GET (str "http://localhost:9500/api/movies/facet")
        :handler 
        (fn [response]
-         (swap! state update-in [:records] (fn [v]
-                                             #?(:cljs (cljs.reader/read-string response)))))))
+         (swap! state update-in [:movie-facet]
+                (fn [v]
+                  #?(:cljs (cljs.reader/read-string response)))))))
 
 (defn get-html []
   (let [context "/movie/list"
@@ -111,12 +122,14 @@
         records []]
     [:div
      [:div (:page @state)]
-     [:button {:on-click fetch-actor} "click"]
+     [:button {:on-click (fn [genre]
+                           (fetch-actor "action"))} "Fetch actor"]
+     [:button {:on-click fetch-facet} "Fetch facet"]
      ;; (debug-html request context session params page-params count offset limit total)
      [:form {:class "left floated" :method "get" :action ""}
       [:input {:type "hidden" :name "page" :value 1}]
       [:div
-       (facet-html movie-facet genre-list)
+       (facet-html (:movie-facet @state) genre-list)
        ;; (crud-list/filter-option-html {:limit 10 :q "t"} context page offset limit count)
 
        (card-list-html context (:records @state))

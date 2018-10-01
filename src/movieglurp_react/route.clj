@@ -19,8 +19,22 @@
                   (pr-str (->> (movie-dao/find-list)
                                :response :docs
                                (map movie-schema/map-movie-record-from-query-row)
+                               (into []))))
+             (GET "/facet" [genre]
+                  (pr-str (->> (movie-dao/get-movie-facet genre)
+                               (into []))))
+
+             (GET "/home" [genre]
+                  (pr-str (->> (movie-dao/find-list-for-home 0 10 genre)
+                               :records
                                (into []))))))
    (assoc-in site-defaults [:security :anti-forgery] false)))
+
+
+
+
+
+
 
 (defroutes main-route
   site-routes
