@@ -20,31 +20,41 @@
                 {:page 1
                  :movie-record {}}))
 
-(defn get-thumb-path [movie-record]
+(defn get-thumb-path [path]
   (str/join ["../../" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]))
-
-
 
 (defn fetch [imdb-id]
   #?(:cljs
      (GET (str "http://localhost:9500/api/movies/detail?imdb-id=" imdb-id)
           :handler 
           (fn [response]
+            
             (let [response-data #?(:cljs (cljs.reader/read-string response))]
-              (swap! state update-in [:movie-record]
-                     (fn [v]
-                       #?(:cljs response-data))))))))
+              (do (js/console.log response)
+                  (swap! state assoc :movie-record response-data))
+              ;; (swap! state update-in [:movie-record]
+              ;;        (fn [v]
+              ;;          response-data))
+              )))))
 
 
 (defn get-html [imdb-id]
-  (let [movie-record (:movie-record @state)]
+  (let [movie-record (:movie-record @state)
+        a (fetch imdb-id)]
     [:div
-     [:button {:on-click (fn [imdb-id]
-                           (fetch imdb-id))} "Fetch"]
+     [:div "imdb-id:" (pr-str imdb-id)]
+     [:a {:href "/"} "Back 2"]
+     [:button {:on-click #(fetch imdb-id)} "Fetch" " " imdb-id]
      ;; {:style "padding-top: 20px;"}
+     (-> @state :movie-record :short-description)
+     (-> @state :movie-record :title)
      (card/card-html "context"
-                     (:imdb-id movie-record)
-                     (:title movie-record)
-                     (:short-description movie-record)
-                     (get-thumb-path movie-record)
-                     (:genre movie-record))]))
+                     (-> @state :movie-record :imdb-id)
+                     (-> @state :movie-record :title)
+                     (-> @state :movie-record :short-description)
+                     (get-thumb-path (-> @state :movie-record :poster))
+                     (get-thumb-path (-> @state :movie-record :genre)))
+     ]))
+
+
+

@@ -60,7 +60,7 @@
          "Tag Label"]
         [:div.scrolling.menu
          (for [g *genre*]
-           [:div.item {:data-value g}
+           [:div.item {:key g :data-value g}
             [:div.ui.red.empty.circular.label]
             [:span g]])]]]]]))
 
@@ -93,15 +93,16 @@
 
 (defn- facet-html [movie-facet genre-list]
   [:div.ui.labels
-   (->> movie-facet
-        (map (fn [m]
-               [:div {:class (clojure.string/join " " ["ui" "label"
-                                                       (when (= (:label m) (:genre @state))
-                                                         "red")])
-                      :on-click #(fetch-actor (:label m))}
-                (:label m)
-                [:div.detail (:count m)]
-                [:i.icon.close]])))])
+   (doall (->> movie-facet
+               (map (fn [m]
+                      [:div {:key (:label m)
+                             :class (clojure.string/join " " ["ui" "label"
+                                                              (when (= (:label m) (:genre @state))
+                                                                "red")])
+                             :on-click #(fetch-actor (:label m))}
+                       (:label m)
+                       [:div.detail (:count m)]
+                       [:i.icon.close]]))))])
 
 (defn- card-list-html [context movie-records-list]
   [:div.ui.stackable.six.column.grid
@@ -109,8 +110,9 @@
 
    (let [html-records (map movieglurp-react.model.movie.movie-schema/map-movie-record-to-card-record movie-records-list)]
      (map (fn [html-record]
-            [:div.column
-             (apply card/card-html context (map #(second %) html-record))])
+            [:div.column {:key (or (:imdb-id html-record) (rand-int 999))}
+             (apply card/card-html context (map #(second %) html-record))
+             ])
           html-records))])
 
 (defn fetch-facet []
@@ -128,7 +130,9 @@
         page 1
         offset 1
         limit 10
-        records []]
+        records []
+        ;; a (fetch-actor "action")
+        ]
     [:div
      [:div "Page: "(:page @state) "Total:" (:total @state)]
      [:div "about:" [:a {:href "/detail?imdb-id=1"} "detail"]]
@@ -141,7 +145,8 @@
       [:div
        (facet-html (:movie-facet @state) genre-list)
        (crud-list/filter-option-html {:q "t"} (:context @state) (:page @state) (:offset @state) (:limit @state) (:total @state))
-       (card-list-html context (:records @state))]]]))
+       (card-list-html context (:records @state))
+       ]]]))
 
 
 

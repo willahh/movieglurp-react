@@ -16,8 +16,10 @@
                  [compojure "1.6.1"]
                  [hiccup "1.0.5"]
                  [enlive "1.1.6"]
+                 [clj-http "3.9.1"]
                  [reagent "0.8.1"]
                  [clj-webdriver "0.7.2"]
+                 [com.github.detro.ghostdriver/phantomjsdriver "1.0.3"]
                  [yogthos/config "1.1.1"]
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.4"

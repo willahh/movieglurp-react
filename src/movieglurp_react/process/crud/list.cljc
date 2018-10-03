@@ -3,13 +3,12 @@
 
 (defn search-html [& value]
   (let [value (first value)]
-    [:form {:action "/admin/search" :method "get"}
-     [:div.ui.fluid.category.search
-      [:div.ui.icon.input
-       [:input.prompt (conj {:placeholder "Search ...", :type "text" :name "q"}
-                            (when value {:value value}))]
-       [:i.search.icon]]
-      [:div.results]]]))
+    [:div.ui.fluid.category.search
+     [:div.ui.icon.input
+      [:input.prompt (conj {:placeholder "Search ...", :type "text" :name "q"}
+                           (when value {:value value}))]
+      [:i.search.icon]]
+     [:div.results]]))
 
 (defn pagination-html [path page offset limit total]
   (when (> total limit)

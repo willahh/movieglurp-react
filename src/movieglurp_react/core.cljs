@@ -1,20 +1,14 @@
 (ns ^:figwheel-hooks-react movieglurp-react.core
   (:require
    [goog.dom :as gdom]
+   [ajax.core :refer [GET POST raw-response-format text-response-format]]
    [reagent.core :as reagent :refer [atom]]
    [secretary.core :as secretary :include-macros true]
    [accountant.core :as accountant]
    [movieglurp-react.front.movie.list :as list]
    [movieglurp-react.front.movie.detail :as detail] 
-   [movieglurp-react.front.wrapper :as html-wrapper]))
-
-(defn home-page []
-  [:div [:h2 "Welcome to movieglurp-re-react"]
-   [:div [:a {:href "/about"} "go to about page"]]])
-
-(defn about-page []
-  [:div [:h2 "About-react movieglurp-re"]
-   [:div [:a {:href "/"} "go to the home page"]]])
+   [movieglurp-react.front.wrapper :as html-wrapper])
+  (:require-macros [secretary.core :refer [defroute]]))
 
 (defonce page (atom #'home-page))
 
@@ -35,22 +29,50 @@
   (accountant/dispatch-current!)
   (mount))
 
-(secretary/defroute "/" []
+(defn fetch-actor [state genre]
+  (def anim-delay 300)
+  (swap! state update-in [:genre] (fn [m] genre))
+  (do (-> (js/$ ".card")
+          (.map (fn [i m] (.hide (js/$ m) anim-delay))))
+      (js/setTimeout
+       (fn []
+         (GET (str "http://localhost:9500/api/movies/home?genre=" genre)
+              :handler 
+              (fn [response]
+                (-> (js/$ ".card")
+                    (.map (fn [i m] (.show (js/$ m) anim-delay))))
+                ;; (:context @state)
+                ;; (:page @state)
+                ;; (:offset @state)
+                ;; (:limit @state)
+                ;; (:total @state)
+                (let [response-data (cljs.reader/read-string response)]
+                  (swap! state update-in [:total] (fn [v]
+                                                    (count (:records response-data))))
+                  (swap! state update-in [:records]
+                         (fn [v]
+                           (-> response-data
+                               :records))))))) anim-delay)))
+
+(defroute "/" []
   (reset! page (fn []
                  (-> (list/get-html)
                      (html-wrapper/wrap-page-html)))))
 
-(secretary/defroute "/detail" [imdb-id]
+(defroute "/detail/:imdb-id" [imdb-id]
   (reset! page (fn []
                  (-> (detail/get-html imdb-id)
                      (html-wrapper/wrap-page-html)))))
 
-(secretary/defroute "/about" []
-  (reset! page (fn []
-                 (-> (list/get-html)
-                     (html-wrapper/wrap-page-html)))))
+(defroute "/about" []
+  (do (reset! page (fn []
+                     (-> 
+                      (list/get-html)
+                      (html-wrapper/wrap-page-html))))
+      ;; (fetch-actor list/state "action")
+      ))
 
-(secretary/defroute "/test" []
+(defroute "/test" []
   (reset! page #'about-page))
 
 (init!)

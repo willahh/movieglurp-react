@@ -1,7 +1,7 @@
 (ns wlh.helper.solr-helper
-  (:require [clj-http.client :as client]
-            [clojure.data.json :as json]
-            [clojure.test :as t]))
+  (:require
+   [clj-http.client :as client]
+   [clojure.data.json :as json]))
 
 (defn add-docs [connection core commit docs]
   (client/post (str "http://" (connection :address)

@@ -7,7 +7,8 @@
 
 (defn find-by-imdb-id [imbd-id]
   (-> (query db/connection collection :q (str "imdb-id:" imbd-id))
-      :response :docs first))
+      :response :docs first
+      (schema/map-movie-record-from-query-row)))
 
 (defn find-list
   ([]

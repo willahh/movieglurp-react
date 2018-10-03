@@ -1,9 +1,8 @@
 (ns movieglurp-react.front.main)
 
-(def nav [{:label "Home" :href "/"}
-          {:label "Week" :info "Get last week movies" :href "/week"}
-          {:label "Actors" :info "Show actors" :href "/actor"}
-          {:label "Admin" :href "/admin" :info "Administration"}])
+(def nav [{:key "Home" :label "Home" :href "/"}
+          {:key "Week" :label "Week" :info "Get last week movies" :href "/week"}
+          {:key "Actors" :label "Actors" :info "Show actors" :href "/actor"}])
 
 (defn head []
   [:head
@@ -17,21 +16,17 @@
 
 (defn nav-html [nav]
   [:div {:class "ui large secondary inverted pointing menu"}
-   [:a {:class "toc item"} "<i class=\"sidebar icon\"></i>"]
+   [:a {:class "toc item"}
+    [:i {:class "sidebar icon"}]]
    (map (fn [row]
-          [:a {:class "item" :href (:href row)} (:label row)]) nav)])
+          [:a {:key (:label row) :class "item" :href (:href row)} (:label row)]) nav)])
 
 (defn header-html []
   [:div
    [:div.ui {:class "ui inverted menu"}
     [:div {:class "header item"} "Glurps!"]
     [:div {:class "ui container"}
-     (nav-html nav)
-     [:div {:class "right menu"}
-      [:div {:class "item segment"}
-       [:a {:class "ui inverted button"} "Log in"]
-       [:a {:class "ui button primary"} "Sign up"]
-       ]]]]])
+     (nav-html nav)]]])
 
 (defn breadcrumb-html []
   [:div {:class "ui large breadcrumb"}
