@@ -1,9 +1,5 @@
 (ns movieglurp-react.route
   (:require
-   ;; [alloglurp.api.api :as api]
-   ;; [alloglurp.front.home :as home]
-   ;; [alloglurp.front.movie.detail :as movie-detail]
-   ;; [alloglurp.service.session.session :refer [wrap-site-route]]
    [compojure.core :refer :all]
    [compojure.route :as route]
    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
@@ -14,6 +10,8 @@
 (def site-routes
   (wrap-defaults
    (routes
+    (context "/" []
+             (GET "/week" [] "a"))
     (context "/api/movies" []
              (GET "/" request
                   (pr-str (->> (movie-dao/find-list)
