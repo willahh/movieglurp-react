@@ -1,0 +1,14 @@
+/* ButtonLink/style.css */
+.ui.button.link,
+.ui.button.link:hover,
+.ui.button.link:focus {
+    background: none;
+    text-decoration: underline;
+    box-shadow: none;
+}
+
+/* header */
+.header-main.ui.menu .item {
+    padding-top: 0;
+    padding-bottom: 0;
+}
