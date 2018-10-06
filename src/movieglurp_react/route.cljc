@@ -1,5 +1,4 @@
 (ns movieglurp-react.route
-
   ;; #?(:cljr
   ;;    (:require [movieglurp-react.route-page :as route-page]))
   
@@ -9,22 +8,13 @@
                 [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
                 [ring.middleware.session :refer [wrap-session]]
                 [movieglurp-react.route-page :as route-page]
-                [movieglurp-react.front.wrapper :as html-wrapper]
-                [movieglurp-react.model.movie.movie-schema :as movie-schema]
-                [movieglurp-react.front.week.week :as week]
-                [movieglurp-react.front.movie.list :as list]
-                [movieglurp-react.front.movie.detail :as detail]
-                )
+                [movieglurp-react.front.wrapper :as html-wrapper])
      :cljs
      (:require  [accountant.core :as accountant]
                 [secretary.core :as secretary :include-macros true]
                 [reagent.core :as reagent :refer [atom]]
                 [movieglurp-react.route-page :as route-page]
-                [movieglurp-react.front.wrapper :as html-wrapper]
-                [movieglurp-react.front.week.week :as week]
-                [movieglurp-react.front.movie.list :as list]
-                [movieglurp-react.front.movie.detail :as detail]
-                ))
+                [movieglurp-react.front.wrapper :as html-wrapper]))
   #?(:cljs
      (:require-macros [secretary.core :refer [defroute]])))
 
@@ -42,12 +32,12 @@
       (apply routes
              (into [] (for [route route-page/routes]
                         (GET (:uri route) [request]
-                             (-> (@ (:handler route) request)
+                             (-> ((:handler route) request)
                                  (html-wrapper/wrap-page-html))))))
       (assoc-in site-defaults [:security :anti-forgery] false))))
 
 (do #?(:clj
-       (core/defroutes main-route
+       (defroutes main-route
          site-routes
          (route/not-found "Not Found"))))
 
@@ -59,7 +49,7 @@
    (into [] (for [route route-page/routes]
               (defroute (:uri route) []
                 (reset! page (fn []
-                               (-> (@ (:handler route) [])
+                               (-> ((:handler route) request)
                                    (html-wrapper/wrap-page-html))))))))
 
 #?(:cljs

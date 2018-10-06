@@ -4,17 +4,22 @@
             [movieglurp-react.front.movie.list :as list]
             [movieglurp-react.front.movie.detail :as detail]))
 
+(defn test2 [request]
+  [:div "test2"])
 
-(defn testttt [request] (fn []
-                          "###a"))
 
-(defn test2 [request] (fn []
-                        "###b"))
 (def routes
   [{:uri "/"
-    :handler #'list/get-html}
+    :handler list/get-html}
    {:uri "/week"
-    :handler #'week/html-ui}
+    :handler week/html-ui}
+   {:uri "/week2"
+    :handler week/html-ui}
    {:uri "/detail/:idb-id"
     :handler (fn [imdb-id]
-               (detail/get-html imdb-id))}])
+               (detail/get-html imdb-id))}
+   {:uri "/test"
+    :handler test2}
+   {:uri "/test2"
+    :handler (fn [request]
+               [:div "a"])}])

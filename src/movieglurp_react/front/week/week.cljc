@@ -5,7 +5,5 @@
 
 (defn html-ui [request]
   [:div
-   [:div "week weeek 6"]
+   [:div "week weeek 7"]
    ])
-
-

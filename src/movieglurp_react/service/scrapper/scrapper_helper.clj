@@ -23,6 +23,3 @@ breaks"
     (html "body")))
 
 (def get-html-from-phantomjs-memoize (memoize get-html-from-phantomjs))
-
-
-
