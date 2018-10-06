@@ -4,6 +4,12 @@
             [movieglurp-react.front.movie.list :as list]
             [movieglurp-react.front.movie.detail :as detail]))
 
+
+(defn testttt [request] (fn []
+                          "###a"))
+
+(defn test2 [request] (fn []
+                        "###b"))
 (def routes
   [{:uri "/"
     :handler #'list/get-html}

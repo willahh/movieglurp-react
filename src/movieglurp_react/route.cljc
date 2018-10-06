@@ -11,16 +11,20 @@
                 [movieglurp-react.route-page :as route-page]
                 [movieglurp-react.front.wrapper :as html-wrapper]
                 [movieglurp-react.model.movie.movie-schema :as movie-schema]
-                [movieglurp-react.front.week.week :as week])
+                [movieglurp-react.front.week.week :as week]
+                [movieglurp-react.front.movie.list :as list]
+                [movieglurp-react.front.movie.detail :as detail]
+                )
      :cljs
      (:require  [accountant.core :as accountant]
                 [secretary.core :as secretary :include-macros true]
                 [reagent.core :as reagent :refer [atom]]
-                ;; [movieglurp-react.route-page :as route-page]
+                [movieglurp-react.route-page :as route-page]
                 [movieglurp-react.front.wrapper :as html-wrapper]
                 [movieglurp-react.front.week.week :as week]
                 [movieglurp-react.front.movie.list :as list]
-                [movieglurp-react.front.movie.detail :as detail]))
+                [movieglurp-react.front.movie.detail :as detail]
+                ))
   #?(:cljs
      (:require-macros [secretary.core :refer [defroute]])))
 
@@ -32,7 +36,6 @@
 (defn current-page []
   [@page])
 
-;; CLJ
 (def site-routes
   #?(:clj
      (wrap-defaults
@@ -43,60 +46,29 @@
                                  (html-wrapper/wrap-page-html))))))
       (assoc-in site-defaults [:security :anti-forgery] false))))
 
+(do #?(:clj
+       (core/defroutes main-route
+         site-routes
+         (route/not-found "Not Found"))))
+
 (def app #?(:clj
-            (-> (defroutes main-route
-                  site-routes
-                  (route/not-found "Not Found"))
+            (-> (core/routes main-route)
                 (wrap-session))))
 
+#?(:cljs
+   (into [] (for [route route-page/routes]
+              (defroute (:uri route) []
+                (reset! page (fn []
+                               (-> (@ (:handler route) [])
+                                   (html-wrapper/wrap-page-html))))))))
 
-
-
-
-;; CLJS
-
-;; (do #?(:cljs
-;;        (defonce page (atom #'home-page))))
-
-(do #?(:cljs
-       (do
-         (defroute "/" []
-           (reset! page (fn []
-                          (-> (list/get-html [])
-                              (html-wrapper/wrap-page-html)))))
-
-         (defroute "/detail/:imdb-id" [imdb-id]
-           (reset! page (fn []
-                          (-> (detail/get-html imdb-id)
-                              (html-wrapper/wrap-page-html)))))
-
-         (defroute "/week" []
-           (reset! page (fn []
-                          (-> (week/html-ui [])
-                              (html-wrapper/wrap-page-html)))))
-
-         (defroute "/about" []
-           (do (reset! page (fn []
-                              (-> 
-                               (list/get-html [])
-                               (html-wrapper/wrap-page-html)))))))))
-
-(defn mount []
-  #?(:cljs
+#?(:cljs
+   (do
+     (accountant/configure-navigation! {:nav-handler
+                                        (fn [path]
+                                          (secretary/dispatch! path))
+                                        :path-exists?
+                                        (fn [path]
+                                          (secretary/locate-route path))})
+     (accountant/dispatch-current!)
      (reagent/render [current-page] (.getElementById js/document "app"))))
-
-(defn init! []
-  #?(:cljs
-     (do
-       (accountant/configure-navigation!
-        {:nav-handler
-         (fn [path]
-           (secretary/dispatch! path))
-         :path-exists?
-         (fn [path]
-           (secretary/locate-route path))})
-       (accountant/dispatch-current!)
-       (mount))))
-
-(do #?(:cljs
-       (init!)))
