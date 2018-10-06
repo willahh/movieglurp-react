@@ -123,7 +123,7 @@
                 (fn [v]
                   #?(:cljs (cljs.reader/read-string response)))))))
 
-(defn get-html []
+(defn get-html [request]
   (let [context "/movie/list"
         genre-list ["action" "aventure"]
         movie-facet [{:name "ok"}]
@@ -134,6 +134,7 @@
         ;; a (fetch-actor "action")
         ]
     [:div
+     [:div "test"]
      [:div "Page: "(:page @state) "Total:" (:total @state)]
      [:div "about:" [:a {:href "/detail?imdb-id=1"} "detail"]]
      [:button {:on-click (fn [genre]

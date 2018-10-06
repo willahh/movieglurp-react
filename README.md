@@ -8,6 +8,8 @@ Clojure Imdb scrapper.
 
 
 ## Development
+Start Solr server
+./solr start
 
 To get an interactive development environment run:
 

@@ -3,7 +3,9 @@
 (defonce state (atom 
                 {:movie-record-list []}))
 
-(defn html-ui []
-  [:div "week weeek"])
+(defn html-ui [request]
+  [:div
+   [:div "week weeek 6"]
+   ])
 
 
