@@ -7,6 +7,7 @@
                 [compojure.route :as route]
                 [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
                 [ring.middleware.session :refer [wrap-session]]
+                [movieglurp-react.api.api :as api]
                 [movieglurp-react.route-page :as route-page]
                 [movieglurp-react.front.wrapper :as html-wrapper])
      :cljs
@@ -39,6 +40,7 @@
 (do #?(:clj
        (defroutes main-route
          site-routes
+         api/api-routes
          (route/not-found "Not Found"))))
 
 (def app #?(:clj
@@ -49,7 +51,7 @@
    (into [] (for [route route-page/routes]
               (defroute (:uri route) []
                 (reset! page (fn []
-                               (-> ((:handler route) request)
+                               (-> ((:handler route) [])
                                    (html-wrapper/wrap-page-html))))))))
 
 #?(:cljs

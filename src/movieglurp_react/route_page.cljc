@@ -7,7 +7,6 @@
 (defn test2 [request]
   [:div "test2"])
 
-
 (def routes
   [{:uri "/"
     :handler list/get-html}

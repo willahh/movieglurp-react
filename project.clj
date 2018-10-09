@@ -27,7 +27,11 @@
 
                  ;; Clojurescript
                  [hiccups "0.3.0"]
-                 [cljs-ajax "0.7.4"]]
+                 [cljs-ajax "0.7.4"]
+                 
+                 [ring/ring-json "0.4.0"]
+                 [com.cognitect/transit-cljs "0.8.256"]
+                 [vvvvalvalval/scope-capture "0.3.3-s1"]]
   :ring {:handler movieglurp-react.route/app}
   :plugins [[lein-ring "0.7.3"]]
   :source-paths ["src"]

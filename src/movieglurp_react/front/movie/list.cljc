@@ -2,17 +2,28 @@
   #?(:clj
      (:require  
       [clojure.string :as str]
+      [clj-http.client :as client]
       [ajax.core :refer [GET POST raw-response-format text-response-format]]
       [movieglurp-react.component.card :as card]
       [movieglurp-react.process.crud.list :as crud-list]
       [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])
      :cljs
      (:require [reagent.core :as reagent :refer [atom]]
+               [cognitect.transit :as t]
                [cljs.reader :as reader]
                [ajax.core :refer [GET POST raw-response-format text-response-format]]
                [movieglurp-react.component.card :as card]
                [movieglurp-react.process.crud.list :as crud-list]
                [movieglurp-react.model.movie.movie-schema :refer [map-movie-record-to-card-record]])))
+
+;; debug
+;; (require 'sc.api)
+
+
+(defn api-json-request-to-data [url]
+  #?(:clj (clojure.data.json/read-str
+           (:body (client/get url))
+           :key-fn keyword)))
 
 (defonce state (atom 
                 {:page 1
@@ -64,6 +75,12 @@
             [:div.ui.red.empty.circular.label]
             [:span g]])]]]]]))
 
+(defn fetch-movie []
+  ;; (swap! state update-in [:records]
+  ;;        (fn [m]
+  ;;          (api-json-request-to-data "http://localhost:3000/api/movie")))
+  )
+
 (defn fetch-actor [genre]
   (def anim-delay 300)
   (swap! state update-in [:genre] (fn [m] genre))
@@ -72,24 +89,16 @@
              (.map (fn [i m] (.hide (js/$ m) anim-delay))))
          (js/setTimeout
           (fn []
-            (GET (str "http://localhost:9500/api/movies/home?genre=" genre)
+            (GET (str "http://localhost:9500/api/movie?genre=" genre)
                  :handler 
                  (fn [response]
                    #?(:cljs
                       (-> (js/$ ".card")
                           (.map (fn [i m] (.show (js/$ m) anim-delay)))))
-                   ;; (:context @state)
-                   ;; (:page @state)
-                   ;; (:offset @state)
-                   ;; (:limit @state)
-                   ;; (:total @state)
-                   (let [response-data #?(:cljs (cljs.reader/read-string response))]
-                     (swap! state update-in [:total] (fn [v]
-                                                       (count (:records response-data))))
-                     (swap! state update-in [:records]
-                            (fn [v]
-                              #?(:cljs (-> response-data
-                                           :records)))))))) anim-delay))))
+                   
+                   (swap! state assoc :records
+                          (let [reader (t/reader :json)]
+                            (:rows (js->clj (js/JSON.parse response) :keywordize-keys true))))))) anim-delay))))
 
 (defn- facet-html [movie-facet genre-list]
   [:div.ui.labels
@@ -107,13 +116,20 @@
 (defn- card-list-html [context movie-records-list]
   [:div.ui.stackable.six.column.grid
    ;; {:class "ui stackable six column grid"}
+   (map (fn [html-record]
+          [:div.column {:key (or (:imdb-id html-record) (rand-int 999))}
+           (card/card-html context
+                           (:imdb-id html-record)
+                           (:title html-record)
+                           (:short-description html-record)
+                           (:poster html-record)
+                           (:director html-record))])
+        movie-records-list)
 
-   (let [html-records (map movieglurp-react.model.movie.movie-schema/map-movie-record-to-card-record movie-records-list)]
-     (map (fn [html-record]
-            [:div.column {:key (or (:imdb-id html-record) (rand-int 999))}
-             (apply card/card-html context (map #(second %) html-record))
-             ])
-          html-records))])
+   (comment (map (fn [html-record]
+                   [:div.column {:key (or (:imdb-id html-record) (rand-int 999))}
+                    (apply card/card-html context (map #(second %) html-record))])
+                 movie-records-list))])
 
 (defn fetch-facet []
   (GET (str "http://localhost:9500/api/movies/facet")
@@ -131,10 +147,12 @@
         offset 1
         limit 10
         records []
-        ;; a (fetch-actor "action")
+        ;; a (fetch-actor "")
+        ;; a (fetch-movie)
         ]
     [:div
-     [:div "test"]
+     [:div "test 2"]
+     ;; [:div (pr-str @state)]
      [:div "Page: "(:page @state) "Total:" (:total @state)]
      [:div "about:" [:a {:href "/detail?imdb-id=1"} "detail"]]
      [:button {:on-click (fn [genre]
@@ -146,10 +164,7 @@
       [:div
        (facet-html (:movie-facet @state) genre-list)
        (crud-list/filter-option-html {:q "t"} (:context @state) (:page @state) (:offset @state) (:limit @state) (:total @state))
+       ;; [:div
+       ;;  (pr-str (:records @state))]
        (card-list-html context (:records @state))
        ]]]))
-
-
-
-
-
