@@ -16,6 +16,9 @@
             ;; [movieglurp-react.model.movie.movie-dao :as movie-dao]
             )))
 
+;; debug
+;; (require 'sc.api)
+
 (defonce state (atom 
                 {:page 1
                  :movie-record {}}))
@@ -25,35 +28,35 @@
 
 (defn fetch [imdb-id]
   #?(:cljs
-     (GET (str "http://localhost:9500/api/movies/detail?imdb-id=" imdb-id)
-          :handler 
+     (GET (str/join ["http://localhost:9500/api/movie/" imdb-id])
+          :handler
           (fn [response]
-            
-            (let [response-data #?(:cljs (cljs.reader/read-string response))]
-              (do (js/console.log response)
-                  (swap! state assoc :movie-record response-data))
-              ;; (swap! state update-in [:movie-record]
-              ;;        (fn [v]
-              ;;          response-data))
-              )))))
+            (swap! state assoc :movie-record
+                   (:row (js->clj
+                          (js/JSON.parse response)
+                          :keywordize-keys true)))))))
 
 
 (defn get-html [imdb-id]
   (let [movie-record (:movie-record @state)
-        a (fetch imdb-id)]
+        ;; (comment a (fetch imdb-id))
+        ]
     [:div
      [:div "imdb-id:" (pr-str imdb-id)]
      [:a {:href "/"} "Back 2"]
-     [:button {:on-click #(fetch imdb-id)} "Fetch" " " imdb-id]
-     ;; {:style "padding-top: 20px;"}
-     (-> @state :movie-record :short-description)
-     (-> @state :movie-record :title)
-     (card/card-html "context"
-                     (-> @state :movie-record :imdb-id)
-                     (-> @state :movie-record :title)
-                     (-> @state :movie-record :short-description)
-                     (get-thumb-path (-> @state :movie-record :poster))
-                     (get-thumb-path (-> @state :movie-record :genre)))
+     [:button {:on-click (fn [imdb-id]
+                           (fetch "tt0077975"))} (str "Fetch" imdb-id)]
+
+     [:div
+      
+      (-> @state :movie-record :short-description)
+      (-> @state :movie-record :title)
+      (card/card-html "context"
+                      (-> @state :movie-record :imdb-id)
+                      (-> @state :movie-record :title)
+                      (-> @state :movie-record :short-description)
+                      (get-thumb-path (-> @state :movie-record :poster))
+                      (get-thumb-path (-> @state :movie-record :genre)))]
      ]))
 
 
